@@ -7,18 +7,17 @@ from llama_index.vector_stores.supabase import SupabaseVectorStore
 
 load_dotenv()
 
-# --- FIX: HARDCODE THE CONNECTION STRING FOR NOW ---
-# Replace this string with YOUR actual Supabase connection string (the one that worked in ingest.py)
+
 DB_CONNECTION = "postgresql://postgres:swastikprasadbasu@db.uyjqsqqelvlqelkvhwpt.supabase.co:6543/postgres" 
 
 def get_policy_answer(query: str):
     print(f"🧠 Thinking about: {query}")
     
-    # 1. Setup Models
+   
     embed_model = GeminiEmbedding(model_name="models/text-embedding-004")
     llm = Gemini(model_name="gemini-2.5-flash")
 
-    # 2. Connect to DB (Now guaranteed to not be None)
+    
     vector_store = SupabaseVectorStore(
         postgres_connection_string=DB_CONNECTION,
         collection_name="vectors",
@@ -30,7 +29,7 @@ def get_policy_answer(query: str):
         embed_model=embed_model
     )
     
-    # 3. Retrieval
+    
     retriever = index.as_retriever(similarity_top_k=5)
     nodes = retriever.retrieve(query)
     
@@ -42,7 +41,7 @@ def get_policy_answer(query: str):
             sources.append(src)
             seen.add(src)
 
-    # 4. Generation
+    
     query_engine = index.as_query_engine(llm=llm)
     response = query_engine.query(query)
     

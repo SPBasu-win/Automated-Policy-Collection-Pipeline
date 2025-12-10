@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Sidebar from "./components/Sidebar";
+import { AuthProvider } from "./contexts/AuthContext";
+import ProtectedWrapper from "./components/ProtectedWrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "The People's Agent",
-  description: "Secure Government Interface",
+  description: "Secure Government Interface with Authentication",
 };
 
 export default function RootLayout({
@@ -18,20 +19,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        
-        <div className="flex h-screen w-full bg-zinc-950 overflow-hidden">
-          
-          
-          <div className="w-64 flex-shrink-0 border-r border-zinc-800 bg-zinc-950">
-            <Sidebar />
-          </div>
-
-          
-          <main className="flex-1 relative flex flex-col h-full metallic-bg">
+        <AuthProvider>
+          <ProtectedWrapper>
             {children}
-          </main>
-          
-        </div>
+          </ProtectedWrapper>
+        </AuthProvider>
       </body>
     </html>
   );

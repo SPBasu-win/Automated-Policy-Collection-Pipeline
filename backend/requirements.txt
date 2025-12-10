@@ -7,3 +7,8 @@ llama-index
 llama-index-llms-gemini
 llama-index-embeddings-gemini
 llama-index-vector-stores-supabase
+PyJWT
+bcrypt
+sqlalchemy
+pydantic[email]
+python-multipart
