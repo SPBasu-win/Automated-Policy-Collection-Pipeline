@@ -8,7 +8,7 @@ from llama_index.vector_stores.supabase import SupabaseVectorStore
 load_dotenv()
 
 
-DB_CONNECTION = "postgresql://postgres:swastikprasadbasu@db.uyjqsqqelvlqelkvhwpt.supabase.co:6543/postgres" 
+DB_CONNECTION = os.getenv("DATABASE_URL")
 
 def get_policy_answer(query: str):
     print(f"🧠 Thinking about: {query}")
