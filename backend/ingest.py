@@ -11,7 +11,7 @@ from supabase import create_client
 load_dotenv()
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-DB_CONNECTION = f"postgresql://postgres:swastikprasadbasu@db.uyjqsqqelvlqelkvhwpt.supabase.co:6543/postgres"
+DB_CONNECTION = SUPABASE_URL
 
 def ingest_data():
     print("🚀 Starting Ingestion Process...")
