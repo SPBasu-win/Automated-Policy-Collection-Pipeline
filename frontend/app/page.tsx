@@ -1,74 +1,161 @@
 "use client";
-import { useEffect, useState } from "react";
-import { FileText, ArrowUpRight, CheckCircle } from "lucide-react";
+import { useAuth } from "./contexts/AuthContext";
+import { User, Mail, Calendar, Shield, LogOut, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
-export default function Home() {
-  const [updates, setUpdates] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function ProfilePage() {
+  const { user, logout } = useAuth();
+  const router = useRouter();
+  const [clearing, setClearing] = useState(false);
 
-  useEffect(() => {
-    fetch("http://127.0.0.1:8000/updates")
-      .then((res) => res.json())
-      .then((data) => {
-        setUpdates(data.updates);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setLoading(false);
+  if (!user) {
+    router.push("/auth");
+    return null;
+  }
+
+  const handleClearHistory = async () => {
+    if (!confirm("Are you sure you want to clear all chat history? This cannot be undone.")) {
+      return;
+    }
+
+    setClearing(true);
+    try {
+      const token = localStorage.getItem("access_token");
+      const res = await fetch("http://127.0.0.1:8000/chat/history", {
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
       });
-  }, []);
+
+      if (res.ok) {
+        alert("Chat history cleared successfully");
+      }
+    } catch (error) {
+      alert("Failed to clear chat history");
+    } finally {
+      setClearing(false);
+    }
+  };
+
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return "Never";
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
 
   return (
-    <div className="max-w-6xl mx-auto px-12 py-16">
-      <header className="mb-12 border-b border-zinc-800 pb-6">
-        <h1 className="text-2xl font-semibold text-white tracking-tight">Notification Center</h1>
-        <p className="text-zinc-400 text-sm mt-1">
-          Live stream of government documents processed by the automated pipeline.
-        </p>
-      </header>
-
-      <div className="border border-zinc-800 rounded-lg bg-zinc-900/50 overflow-hidden">
-      
-        <div className="grid grid-cols-12 gap-4 px-6 py-3 border-b border-zinc-800 bg-zinc-900 text-xs font-semibold text-zinc-500 uppercase tracking-wider">
-          <div className="col-span-6">Document Name</div>
-          <div className="col-span-2">Date Processed</div>
-          <div className="col-span-2">Status</div>
-          <div className="col-span-2 text-right">Source</div>
+    <div className="min-h-screen bg-zinc-950 p-8">
+      <div className="max-w-3xl mx-auto">
+        {/* Header */}
+        <div className="mb-8 animate-fadeIn">
+          <h1 className="text-3xl font-semibold text-white mb-2">Profile</h1>
+          <p className="text-zinc-400">Manage your account information and settings</p>
         </div>
 
-      
-        {loading && <div className="p-8 text-center text-zinc-600 text-sm animate-pulse">Syncing...</div>}
-        {!loading && updates.length === 0 && (
-          <div className="p-12 text-center text-zinc-600 text-sm">No recent updates found.</div>
-        )}
+        {/* Profile Card */}
+        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 mb-6 shadow-xl hover:shadow-2xl transition-all animate-fadeIn" style={{ animationDelay: "100ms" }}>
+          <div className="flex items-start gap-6">
+            {/* Avatar */}
+            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0 shadow-lg hover:scale-105 transition-transform">
+              <span className="text-3xl font-bold text-white">
+                {user.username.charAt(0).toUpperCase()}
+              </span>
+            </div>
 
-       
-        <div className="divide-y divide-zinc-800/50">
-          {updates.map((item, i) => (
-            <div key={i} className="grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-zinc-800/30 transition-colors group">
-              <div className="col-span-6 flex items-center gap-3">
-                <FileText className="w-4 h-4 text-zinc-500 group-hover:text-zinc-300 transition-colors" />
-                <div className="truncate">
-                  <span className="block text-sm text-zinc-300 font-medium truncate pr-4">{item.title}</span>
-                  <span className="block text-xs text-zinc-600 font-mono truncate max-w-md">{item.url}</span>
+            {/* User Info */}
+            <div className="flex-1">
+              <h2 className="text-2xl font-semibold text-white mb-1">{user.username}</h2>
+              <p className="text-zinc-400 mb-6">{user.email}</p>
+
+              <div className="space-y-4">
+                {/* Email */}
+                <div className="flex items-center gap-3 text-sm">
+                  <Mail className="w-4 h-4 text-zinc-500" />
+                  <span className="text-zinc-400">Email:</span>
+                  <span className="text-white">{user.email}</span>
+                </div>
+
+                {/* User ID */}
+                <div className="flex items-center gap-3 text-sm">
+                  <User className="w-4 h-4 text-zinc-500" />
+                  <span className="text-zinc-400">User ID:</span>
+                  <span className="text-white font-mono">#{user.id}</span>
+                </div>
+
+                {/* Account Created */}
+                <div className="flex items-center gap-3 text-sm">
+                  <Calendar className="w-4 h-4 text-zinc-500" />
+                  <span className="text-zinc-400">Member Since:</span>
+                  <span className="text-white">{formatDate(user.created_at)}</span>
+                </div>
+
+                {/* Last Login */}
+                <div className="flex items-center gap-3 text-sm">
+                  <Shield className="w-4 h-4 text-zinc-500" />
+                  <span className="text-zinc-400">Last Login:</span>
+                  <span className="text-white">{formatDate(user.last_login)}</span>
                 </div>
               </div>
-              <div className="col-span-2 text-xs text-zinc-500 font-mono">
-                {new Date().toLocaleDateString()}
-              </div>
-              <div className="col-span-2">
-                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-medium bg-zinc-800 text-zinc-400 border border-zinc-700">
-                  <CheckCircle size={10} /> Indexed
-                </span>
-              </div>
-              <div className="col-span-2 flex justify-end">
-                <a href={item.url} target="_blank" className="text-xs text-zinc-500 hover:text-white hover:underline flex items-center gap-1">
-                  View PDF <ArrowUpRight size={10} />
-                </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Security Section */}
+        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 mb-6 shadow-xl hover:shadow-2xl transition-all animate-fadeIn" style={{ animationDelay: "200ms" }}>
+          <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <Shield className="w-5 h-5" />
+            Security & Privacy
+          </h3>
+          <div className="space-y-4">
+            <div className="flex items-start gap-2 text-sm text-zinc-400">
+              <div className="w-2 h-2 rounded-full bg-green-500 mt-1.5 shadow-lg shadow-green-500/50"></div>
+              <div>
+                <p className="text-white mb-1">Password Encryption</p>
+                <p>Your password is secured with bcrypt hashing</p>
               </div>
             </div>
-          ))}
+            <div className="flex items-start gap-2 text-sm text-zinc-400">
+              <div className="w-2 h-2 rounded-full bg-green-500 mt-1.5 shadow-lg shadow-green-500/50"></div>
+              <div>
+                <p className="text-white mb-1">JWT Authentication</p>
+                <p>Secure token-based authentication for all requests</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-2 text-sm text-zinc-400">
+              <div className="w-2 h-2 rounded-full bg-green-500 mt-1.5 shadow-lg shadow-green-500/50"></div>
+              <div>
+                <p className="text-white mb-1">SQL Injection Protection</p>
+                <p>Advanced input validation prevents malicious queries</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="space-y-3 animate-fadeIn" style={{ animationDelay: "300ms" }}>
+          <button
+            onClick={handleClearHistory}
+            disabled={clearing}
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-zinc-300 hover:bg-zinc-700 transition-all hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+          >
+            <Trash2 className="w-4 h-4" />
+            {clearing ? "Clearing..." : "Clear Chat History"}
+          </button>
+
+          <button
+            onClick={logout}
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 hover:bg-red-500/20 hover:border-red-500/30 transition-all hover:shadow-lg hover:shadow-red-500/20 transform hover:scale-[1.02] active:scale-[0.98]"
+          >
+            <LogOut className="w-4 h-4" />
+            Sign Out
+          </button>
         </div>
       </div>
     </div>

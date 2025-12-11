@@ -14,17 +14,28 @@ interface Message {
 
 const TypingText = ({ text }: { text: string }) => {
   const [display, setDisplay] = useState("");
+  const [showCursor, setShowCursor] = useState(true);
+
   useEffect(() => {
     if (!text) return;
     let i = 0;
     const timer = setInterval(() => {
-      setDisplay(prev => prev + text.charAt(i));
+      setDisplay(text.slice(0, i));
       i++;
-      if (i >= text.length) clearInterval(timer);
+      if (i > text.length) {
+        clearInterval(timer);
+        setShowCursor(false);
+      }
     }, 8);
     return () => clearInterval(timer);
   }, [text]);
-  return <span>{display}</span>;
+
+  return (
+    <span className="inline-block animate-fadeIn">
+      {display}
+      {showCursor && <span className="inline-block w-0.5 h-4 bg-blue-400 ml-0.5 animate-pulse" />}
+    </span>
+  );
 };
 
 export default function ChatPage() {
@@ -131,7 +142,6 @@ export default function ChatPage() {
         timestamp: new Date()
       }]);
       
-      // Reload history after new message
       await loadChatHistory();
     } catch (error) {
       setMessages(prev => [...prev, { 
@@ -179,7 +189,7 @@ export default function ChatPage() {
               chatHistory.map((msg, idx) => (
                 <div 
                   key={msg.id || idx}
-                  className="p-3 rounded-lg bg-zinc-800 hover:bg-zinc-700 cursor-pointer transition-colors"
+                  className="p-3 rounded-lg bg-zinc-800 hover:bg-zinc-700 cursor-pointer transition-all hover:shadow-lg transform hover:scale-[1.02]"
                   onClick={() => {
                     const start = Math.max(0, idx - 5);
                     const end = Math.min(chatHistory.length, idx + 6);
@@ -214,7 +224,7 @@ export default function ChatPage() {
           </div>
           <button
             onClick={() => setShowHistory(!showHistory)}
-            className="px-3 py-1.5 text-sm text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-md transition-colors flex items-center gap-2"
+            className="px-3 py-1.5 text-sm text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-md transition-all flex items-center gap-2 hover:shadow-lg transform hover:scale-105"
           >
             <History className="w-4 h-4" />
             History
@@ -225,7 +235,7 @@ export default function ChatPage() {
         <div className="flex-1 overflow-y-auto p-4 md:p-8">
           <div className="max-w-3xl mx-auto space-y-8">
             {messages.map((m, i) => (
-              <div key={i} className={`flex gap-4 ${m.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
+              <div key={i} className={`flex gap-4 ${m.role === "user" ? "flex-row-reverse" : "flex-row"} animate-fadeIn`}>
                 <div className={`w-8 h-8 rounded flex items-center justify-center flex-shrink-0 ${
                   m.role === "user" ? "bg-zinc-800" : "bg-blue-700"
                 }`}>
@@ -247,7 +257,7 @@ export default function ChatPage() {
                         <p className="text-[10px] text-zinc-500 font-semibold mb-2">VERIFIED SOURCES</p>
                         <div className="flex flex-col gap-1">
                           {m.sources.map((src: string, idx: number) => (
-                            <a key={idx} href={src} target="_blank" className="text-xs text-blue-400 hover:underline truncate">
+                            <a key={idx} href={src} target="_blank" className="text-xs text-blue-400 hover:underline truncate hover:text-blue-300 transition-colors">
                               [{idx + 1}] {src.split('/').pop()}
                             </a>
                           ))}
@@ -281,13 +291,13 @@ export default function ChatPage() {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && send()}
               placeholder="Send a message..."
-              className="w-full bg-zinc-900 border border-zinc-800 rounded-xl py-3.5 pl-4 pr-12 text-zinc-200 focus:outline-none focus:border-zinc-600 transition-all"
+              className="w-full bg-zinc-900 border border-zinc-800 rounded-xl py-3.5 pl-4 pr-12 text-zinc-200 focus:outline-none focus:border-zinc-600 focus:ring-2 focus:ring-zinc-600/50 transition-all hover:border-zinc-700"
               maxLength={5000}
             />
             <button 
               onClick={send} 
               disabled={!input.trim() || loading} 
-              className="absolute right-3 top-3 p-1.5 text-zinc-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+              className="absolute right-3 top-3 p-1.5 text-zinc-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-110 active:scale-95"
             >
               {loading ? <StopCircle size={16} /> : <Send size={16} />}
             </button>

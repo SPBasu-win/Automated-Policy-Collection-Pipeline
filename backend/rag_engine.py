@@ -9,6 +9,9 @@ load_dotenv()
 
 
 DB_CONNECTION = os.getenv("DATABASE_URL")
+if not DB_CONNECTION:
+    raise ValueError("DATABASE_URL environment variable is required")
+
 
 def get_policy_answer(query: str):
     print(f"🧠 Thinking about: {query}")

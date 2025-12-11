@@ -54,16 +54,16 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-zinc-950 p-8">
       <div className="max-w-3xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-8 animate-fadeIn">
           <h1 className="text-3xl font-semibold text-white mb-2">Profile</h1>
           <p className="text-zinc-400">Manage your account information and settings</p>
         </div>
 
         {/* Profile Card */}
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 mb-6">
+        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 mb-6 shadow-xl hover:shadow-2xl transition-all animate-fadeIn" style={{ animationDelay: "100ms" }}>
           <div className="flex items-start gap-6">
             {/* Avatar */}
-            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0 shadow-lg hover:scale-105 transition-transform">
               <span className="text-3xl font-bold text-white">
                 {user.username.charAt(0).toUpperCase()}
               </span>
@@ -108,28 +108,28 @@ export default function ProfilePage() {
         </div>
 
         {/* Security Section */}
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 mb-6">
+        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 mb-6 shadow-xl hover:shadow-2xl transition-all animate-fadeIn" style={{ animationDelay: "200ms" }}>
           <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
             <Shield className="w-5 h-5" />
             Security & Privacy
           </h3>
           <div className="space-y-4">
             <div className="flex items-start gap-2 text-sm text-zinc-400">
-              <div className="w-2 h-2 rounded-full bg-green-500 mt-1.5"></div>
+              <div className="w-2 h-2 rounded-full bg-green-500 mt-1.5 shadow-lg shadow-green-500/50"></div>
               <div>
                 <p className="text-white mb-1">Password Encryption</p>
                 <p>Your password is secured with bcrypt hashing</p>
               </div>
             </div>
             <div className="flex items-start gap-2 text-sm text-zinc-400">
-              <div className="w-2 h-2 rounded-full bg-green-500 mt-1.5"></div>
+              <div className="w-2 h-2 rounded-full bg-green-500 mt-1.5 shadow-lg shadow-green-500/50"></div>
               <div>
                 <p className="text-white mb-1">JWT Authentication</p>
                 <p>Secure token-based authentication for all requests</p>
               </div>
             </div>
             <div className="flex items-start gap-2 text-sm text-zinc-400">
-              <div className="w-2 h-2 rounded-full bg-green-500 mt-1.5"></div>
+              <div className="w-2 h-2 rounded-full bg-green-500 mt-1.5 shadow-lg shadow-green-500/50"></div>
               <div>
                 <p className="text-white mb-1">SQL Injection Protection</p>
                 <p>Advanced input validation prevents malicious queries</p>
@@ -139,11 +139,11 @@ export default function ProfilePage() {
         </div>
 
         {/* Actions */}
-        <div className="space-y-3">
+        <div className="space-y-3 animate-fadeIn" style={{ animationDelay: "300ms" }}>
           <button
             onClick={handleClearHistory}
             disabled={clearing}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-zinc-300 hover:bg-zinc-700 transition-colors disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-zinc-300 hover:bg-zinc-700 transition-all hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
           >
             <Trash2 className="w-4 h-4" />
             {clearing ? "Clearing..." : "Clear Chat History"}
@@ -151,7 +151,7 @@ export default function ProfilePage() {
 
           <button
             onClick={logout}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 hover:bg-red-500/20 transition-colors"
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 hover:bg-red-500/20 hover:border-red-500/30 transition-all hover:shadow-lg hover:shadow-red-500/20 transform hover:scale-[1.02] active:scale-[0.98]"
           >
             <LogOut className="w-4 h-4" />
             Sign Out
