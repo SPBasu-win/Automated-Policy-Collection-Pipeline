@@ -1,14 +1,30 @@
-fastapi
-uvicorn
-python-dotenv
-supabase
-google-generativeai
-llama-index
-llama-index-llms-gemini
-llama-index-embeddings-gemini
-llama-index-vector-stores-supabase
-PyJWT
-bcrypt
-sqlalchemy
-pydantic[email]
-python-multipart
+# Core API
+fastapi==0.115.5
+uvicorn[standard]==0.34.0
+python-dotenv==1.0.1
+
+# Database
+supabase==2.10.1
+sqlalchemy==2.0.36
+psycopg2-binary==2.9.10
+
+# AI/ML
+google-generativeai==0.8.3
+llama-index==0.12.7
+llama-index-llms-gemini==0.3.13
+llama-index-embeddings-gemini==0.2.6
+llama-index-vector-stores-supabase==0.3.4
+
+# Security
+PyJWT==2.10.1
+bcrypt==4.2.1
+pydantic[email]==2.10.4
+python-multipart==0.0.20
+
+# Performance & Caching
+redis==5.2.2
+hiredis==3.1.0  # C parser for Redis (faster)
+
+# Monitoring (Optional)
+# sentry-sdk==2.19.2
+# prometheus-client==0.21.1
